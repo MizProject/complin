@@ -1,0 +1,87 @@
+#!/bin/bash
+
+# This is Complin, a Part of EasyKotlinCompile
+# This script was made because a user by the name of
+# Mizu got frustrated that some flags do "-lorem-ipsum" 
+# Instead of "--lorem-ipsum"
+# or basically
+# "-include-runtime" instead of "--include-runtime"
+# So he made this to sure that for people who relied on -- methods can
+# easily use the kotlin compiler without complainin
+# But this is only for basic compiling
+
+function help() {
+    echo "Complin v1"
+    echo "A basic Easy compiler for people who got used to -- instead of -"
+    echo ""
+    echo "Sample"
+    echo "complin file.kt <args>"
+    echo ""
+    echo "Args available natively on this script"
+    echo ""
+    echo "--help                                              Shows help"
+    echo "--build <name of the jar file> (-b)                 Build the kt file to a jar file"
+    echo "--build-and-run <name of the jar file> (-br)       Build the kt file and directly run to java"
+    echo ""
+    exit
+}
+
+function build() {
+    kotlinc $1 -include-runtime -j $JAR
+    case $RUN in
+        "true")
+            java -jar $JAR
+            ;;
+    esac
+}
+
+
+RUN=false
+
+case $1 in
+    --help)
+        help
+    ;;
+    -h)
+        help
+    ;;
+    *)
+        PATH=$(realpath $1)
+        if [ -e "$PATH" ]; then
+            case $2 in
+                "--build")
+                    if [ ! -n "$3" ]; then
+                        JAR=output.jar
+                    else
+                        JAR=$3
+                    fi
+                    ;;
+                "-b")
+                    if [ ! -n "$3" ]; then
+                        JAR=output.jar
+                    else
+                        JAR=$3
+                    fi
+                    ;;
+                "--build-and-run")
+                    if [ ! -n "$3" ]; then
+                        JAR=output.jar
+                        RUN=true
+                    else
+                        JAR=$3
+                        RUN=true
+                    fi
+                    ;;
+                "-br")
+                    if [ ! -n "$3" ]; then
+                        JAR=output.jar
+                        RUN=true
+                    else 
+                        JAR=$3
+                        RUN=true
+                    fi
+                    ;;
+            esac
+            build $PATH
+        else 
+esac
